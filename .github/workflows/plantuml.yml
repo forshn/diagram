@@ -40,7 +40,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add diagrams/**/*.png
-          git commit -m "Automated diagram generation"
-          git push origin main
+          git add -f diagrams/**/*.png
+          git commit -m "Automated diagram generation" || echo "No changes to commit"
+          git push origin main || echo "Nothing to push"
         if: success()
