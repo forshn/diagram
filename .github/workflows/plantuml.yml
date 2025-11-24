@@ -26,18 +26,12 @@ jobs:
         run: |
           curl -L -o plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
 
-      - name: Install Graphviz
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y graphviz
-
       - name: Generate Diagrams
         run: |
           java -jar plantuml.jar diagrams/context/*.puml
           java -jar plantuml.jar diagrams/container/*.puml
           java -jar plantuml.jar diagrams/component/*.puml
-          # Enable this when diagrams/code/*.puml is present in CI
-          # java -jar plantuml.jar diagrams/code/*.puml
+          java -jar plantuml.jar diagrams/code/*.puml
 
       - name: Commit Diagrams
         run: |
