@@ -22,20 +22,22 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Install PlantUML
-        run: sudo apt-get install plantuml
+      - name: Download PlantUML jar
+        run: |
+          curl -L -o plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
 
       - name: Generate Diagrams
         run: |
-          plantuml diagrams/context/*.puml
-          plantuml diagrams/container/*.puml
-          plantuml diagrams/component/*.puml 
+          java -jar plantuml.jar diagrams/context/*.puml
+          java -jar plantuml.jar diagrams/container/*.puml
+          java -jar plantuml.jar diagrams/component/*.puml
+          java -jar plantuml.jar diagrams/code/*.puml
 
       - name: Commit Diagrams
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add diagrams/**/*.png
-          git commit -m "Automated diagram generation"
+          git add -f diagrams/**/*.png
+          git commit -m "Automated diagram generation" || echo "No changes to commit"
           git push origin main
         if: success()
