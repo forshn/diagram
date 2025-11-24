@@ -13,8 +13,8 @@ System_Ext(api, "Third-Party API", "External API for fitness data integration")
 System_Ext(bank, "Bank System", "External bank for processing payments")
 
 Rel(user, FitLifeSystem, "Uses the system")
-Rel(admin,FitLifeSystem,"Manages the system")
-Rel(FitLifeSystem,api,"Fetches fitness data")
-Rel(FitLifeSystem,bank,"Processes payments")
+Rel(admin, FitLifeSystem, "Manages the system")
+Rel(FitLifeSystem, api, "Fetches fitness data")
+Rel(FitLifeSystem, bank, "Processes payments")
 
 @enduml

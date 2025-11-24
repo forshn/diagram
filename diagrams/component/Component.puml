@@ -19,10 +19,10 @@ Container(WebApp, "Web Application", "Java, Spring") {
   Component(RepositoryLayer, "Repository Layer", "Data access logic")
 }
 
-Rel(AuthController,ServiceLayer,"Calls business logic")
-Rel(UserController,ServiceLayer,"Calls business logic")
-Rel(ScheduleController,ServiceLayer,"Calls business logic")
-Rel(PaymentController,ServiceLayer,"Calls business logic")
-Rel(ServiceLayer,RepositoryLayer,"Reads/Writes data")
-Rel(RepositoryLayer,Database,"Reads/Writes user data")
+Rel(AuthController, ServiceLayer, "Calls business logic")
+Rel(UserController, ServiceLayer, "Calls business logic")
+Rel(ScheduleController, ServiceLayer, "Calls business logic")
+Rel(PaymentController, ServiceLayer, "Calls business logic")
+Rel(ServiceLayer, RepositoryLayer, "Reads/Writes data")
+Rel(RepositoryLayer, Database, "Reads/Writes user data")
 @enduml
