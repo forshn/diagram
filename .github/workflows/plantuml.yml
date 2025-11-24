@@ -22,6 +22,9 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
       - name: Download PlantUML
         run: |
           mkdir -p ~/plantuml
@@ -42,5 +45,5 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add -f diagrams/**/*.png
           git commit -m "Automated diagram generation" || echo "No changes to commit"
-          git push origin main || echo "Nothing to push"
+          git push https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main || echo "Nothing to push"
         if: success()
