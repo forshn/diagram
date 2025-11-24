@@ -1,0 +1,39 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Build outputs
+build/
+out/
+dist/
+.target/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Node
+node_modules/
+
+# Java/Maven/Gradle
+.target/
+.mvn/
+.mvn/wrapper/
+**/.gradle/
+**/target/
+**/build/
+
+# Python
+__pycache__/
+*.pyc
+
+# PlantUML generated images
+*.png
+*.svg
+*.eps
+*.pdf
