@@ -33,12 +33,7 @@ __pycache__/
 *.pyc
 
 # PlantUML generated images
-# По умолчанию игнорируем, но разрешаем в diagrams/
 *.png
 *.svg
 *.eps
 *.pdf
-!diagrams/**/*.png
-!diagrams/**/*.svg
-!diagrams/**/*.eps
-!diagrams/**/*.pdf
