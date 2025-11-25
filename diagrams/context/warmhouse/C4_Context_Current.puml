@@ -1,0 +1,18 @@
+@startuml C4_Context_Current
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+title C4 Context - Текущая архитектура системы "Тёплый дом"
+
+Person(user, "Владелец дома", "Управляет отоплением и мониторит температуру в доме")
+Person(specialist, "Специалист по подключению", "Выезжает на место для установки и подключения датчиков")
+
+System(warmhouse, "Система управления отоплением\n'Тёплый дом'", "Go монолит + Postgres\nУправление отоплением и мониторинг температуры")
+
+System_Ext(sensors, "Датчики и реле", "Физические устройства в доме\nДатчики температуры")
+
+Rel(user, warmhouse, "Управляет отоплением\nПроверяет температуру", "REST API (синхронно)")
+Rel(specialist, warmhouse, "Подключает датчики\nКонфигурирует систему", "Прямое взаимодействие")
+Rel(warmhouse, sensors, "Запрашивает данные\nУправляет состоянием", "Синхронные запросы")
+
+@enduml
