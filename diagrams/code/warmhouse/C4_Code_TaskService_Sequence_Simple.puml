@@ -1,0 +1,65 @@
+@startuml C4_Code_TaskService_Sequence_Simple
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+skinparam sequenceArrowThickness 1
+skinparam sequenceArrowColor #586e75
+skinparam sequenceLifeLineBorderColor #657b83
+skinparam sequenceLifeLineBackgroundColor #FDF6E3
+skinparam sequenceParticipantBorderColor #657b83
+skinparam sequenceParticipantBackgroundColor #EEE8D5
+
+Title task-service
+
+actor Client
+participant "TaskController" as Controller
+participant "TaskService" as Service
+participant "CommandValidator" as Validator
+participant "DeviceCache" as Cache
+participant "CommandHandler" as Handler
+participant "TaskRepository" as Repo
+participant "Adapter" as Adapter
+
+Client -> Controller : POST /tasks/execute
+activate Controller
+
+Controller -> Service : executeCommand(command)
+activate Service
+
+== Валидация ==
+
+Service -> Validator : validate(command)
+activate Validator
+Validator -> Cache : getDevice(deviceId)
+Cache --> Validator : Device
+Validator --> Service : ok / error
+deactivate Validator
+
+alt невалидная команда
+  Service --> Controller : ошибка валидации
+  deactivate Service
+  deactivate Controller
+  return
+end
+
+Service -> Handler : handle(command)
+activate Handler
+Handler -> Repo : save(Task [PENDING])
+Repo --> Handler : Task
+Handler --> Service : Task
+deactivate Handler
+
+
+Service -> Adapter : отправить команду устройству
+Adapter --> Service : принято к исполнению
+
+Service -> Repo : updateStatus(Task.id, SENT)
+Repo --> Service : ok
+
+Service --> Controller : TaskId + статус (PENDING/SENT)
+deactivate Service
+
+Controller --> Client : 202 Accepted + TaskId
+deactivate Controller
+
+@enduml
