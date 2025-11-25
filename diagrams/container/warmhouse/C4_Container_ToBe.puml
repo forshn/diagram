@@ -1,0 +1,57 @@
+@startuml C4_Container
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 30
+
+title C4 Container - Микросервисная архитектура "Тёплый дом"
+
+Person(user, "Пользователь")
+
+Container(gateway, "warmhouse-gateway", "Spring Boot", "API Gateway")
+
+Container(authService, "auth-service", "Spring Boot", "Аутентификация")
+Container(userService, "user-service", "Spring Boot [PostgreSQL]", "Профили, дома")
+Container(sensorService, "sensor-service", "Spring Boot [PostgreSQL]", "Устройства")
+
+Container(taskService, "task-service", "Spring Boot [PostgreSQL]", "Команды")
+Container(scenarioService, "scenario-service", "Spring Boot[PostgreSQL]", "Сценарии")
+Container(telemetryService, "telemetry-service", "Spring Boot", "Метрики")
+
+Container(adapterService, "warmhouse-adapter", "Spring Boot", "Адаптеры протоколов")
+Container(paymentService, "payment-service", "Spring Boot[PostgreSQL]", "Платежи")
+Container(notificationService, "notification-service", "Spring Boot[PostgreSQL]", "Уведомления")
+
+System_Ext(keycloak, "Keycloak", "OAuth 2.0")
+System_Ext(externalApi, "Внешние API", "REST")
+System_Ext(devices, "Умные устройства", "Разные внешн. провайдеры")
+
+Rel(user, gateway, "HTTP/JSON")
+
+Rel(gateway, authService, "REST")
+Rel(gateway, userService, "REST")
+Rel(gateway, sensorService, "REST")
+Rel(gateway, taskService, "REST")
+Rel(gateway, scenarioService, "REST")
+Rel(gateway, paymentService, "REST")
+
+Rel(authService, keycloak, "OAuth 2.0")
+
+Rel(sensorService, userService, "REST")
+Rel(taskService, sensorService, "REST")
+Rel(scenarioService, sensorService, "REST")
+Rel(scenarioService, telemetryService, "REST")
+
+Rel(taskService, adapterService, "Kafka")
+Rel(adapterService, telemetryService, "Kafka")
+Rel(scenarioService, taskService, "Kafka")
+Rel(paymentService, notificationService, "Kafka")
+
+Rel(adapterService, devices, "Zigbee/Z-Wave")
+Rel(adapterService, externalApi, "REST")
+Rel(paymentService, externalApi, "REST")
+Rel(notificationService, externalApi, "REST")
+
+@enduml
