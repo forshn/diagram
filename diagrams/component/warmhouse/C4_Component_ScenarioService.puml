@@ -1,0 +1,60 @@
+@startuml C4_Component_ScenarioService
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+skinparam linetype curved
+hide stereotype
+
+LAYOUT_WITH_LEGEND()
+
+' Styling
+skinparam rectangle {
+    BackgroundColor<<boundary>> #4A90E2
+    BorderColor<<boundary>> #2E5C8A
+    FontColor<<boundary>> white
+}
+
+title C4 Component - scenario-service
+
+System_Boundary(scenarioService, "scenario-service [Container]") {
+    
+    Component(controller, "ScenarioController", "REST", "Управление сценариями\nGET/POST/PUT/DELETE")
+    
+    Component(service, "ScenarioService", "Service", "Бизнес-логика\nСохранение и кэширование")
+    
+    Component(scenarioCache, "ScenarioCache", "In-Memory Cache", "Кэш всех сценариев\nБыстрый доступ")
+    
+    Component(triggerEvaluator, "TriggerEvaluator", "Component", "Проверка триггеров\nПо времени, событиям, значениям")
+    
+    Component(ruleEngine, "RuleEngine", "Component", "Вычисление условий\nОценка правил")
+    
+    Component(actionExecutor, "ActionExecutor", "Component", "Выполнение действий\nОтправка команд")
+    
+    Component(scheduler, "TaskScheduler", "Scheduler", "Проверка по времени\nПериодические проверки")
+    
+    Component(repository, "ScenarioRepository", "JPA", "Сохранение сценариев")
+}
+
+System_Ext(taskService, "task-service", "REST", "")
+System_Ext(telemetryService, "telemetry-service", "REST", "")
+System_Ext(database, "PostgreSQL", "SQL", "")
+
+' Connections - Management
+Rel(controller, service, "", "")
+Rel(service, scenarioCache, "", "")
+Rel(service, repository, "", "")
+Rel(repository, database, "", "")
+
+' Connections - Trigger Detection
+Rel(scheduler, triggerEvaluator, "", "")
+Rel(triggerEvaluator, scenarioCache, "", "")
+
+' Connections - Rule Evaluation
+Rel(triggerEvaluator, ruleEngine, "", "")
+Rel(ruleEngine, telemetryService, "", "")
+
+' Connections - Action Execution
+Rel(ruleEngine, actionExecutor, "", "")
+Rel(actionExecutor, taskService, "", "")
+
+@enduml

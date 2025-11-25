@@ -1,0 +1,76 @@
+@startuml C4_Component_TaskService
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+top to bottom direction
+skinparam linetype curved
+hide stereotype
+
+skinparam rectangle {
+    BackgroundColor<<boundary>> #4A90E2
+    BorderColor<<boundary>> #2E5C8A
+    FontColor<<boundary>> white
+}
+
+title C4 Component - task-service
+
+System_Boundary(taskService, "task-service [Container]") {
+    
+    Component(controller, "TaskController", "REST", "POST /tasks/execute\nGET /tasks/{id}")
+    
+    Component(service, "TaskService", "Service", "Обработка команд\nОркестрация")
+    
+    Component(heatingHandler, "HeatingCommandHandler", "Handler", "Включить/выключить\nУстановить температуру")
+    
+    Component(lightHandler, "LightCommandHandler", "Handler", "Включить/выключить\nУстановить яркость")
+    
+    Component(gateHandler, "GateCommandHandler", "Handler", "Открыть/закрыть\nУстановить позицию")
+    
+    Component(cameraHandler, "CameraCommandHandler", "Handler", "Включить/выключить\nНачать запись")
+    
+    Component(validator, "CommandValidator", "Component", "Валидация команды\nПроверка параметров")
+    
+    Component(deviceCache, "DeviceCache", "In-Memory Cache", "Кэш устройств\nСинхронизируется с sensor-service")
+    
+    Component(executor, "CommandExecutor", "Component", "Отправка на адаптер")
+    
+    Component(kafkaProducer, "KafkaProducer", "Kafka", "Публикация команд")
+    
+    Component(kafkaConsumer, "KafkaConsumer", "Kafka", "Получение результатов\nОбновление истории")
+    
+    Component(resultHandler, "ResultHandler", "Component", "Обработка результатов\nОбновление статуса")
+    
+    Component(repository, "TaskRepository", "JPA", "Сохранение истории")
+}
+
+System_Ext(sensorService, "sensor-service", "REST", "")
+System_Ext(kafka, "Kafka", "", "")
+System_Ext(database, "PostgreSQL", "SQL", "")
+
+Rel(controller, service, "", "")
+Rel(service, heatingHandler, "", "")
+Rel(service, lightHandler, "", "")
+Rel(service, gateHandler, "", "")
+Rel(service, cameraHandler, "", "")
+
+Rel(heatingHandler, validator, "", "")
+Rel(lightHandler, validator, "", "")
+Rel(gateHandler, validator, "", "")
+Rel(cameraHandler, validator, "", "")
+
+Rel(validator, deviceCache, "", "")
+Rel(deviceCache, sensorService, "", "")
+
+Rel(validator, executor, "", "")
+Rel(executor, kafkaProducer, "", "")
+Rel(kafkaProducer, kafka, "", "")
+
+Rel(service, repository, "", "")
+
+Rel(kafka, kafkaConsumer, "", "")
+Rel(kafkaConsumer, resultHandler, "", "")
+Rel(resultHandler, repository, "", "")
+
+Rel(repository, database, "", "")
+
+@enduml
