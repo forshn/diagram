@@ -37,9 +37,28 @@ jobs:
           wget https://github.com/plantuml/plantuml/releases/download/v1.2024.8/plantuml-1.2024.8.jar -O plantuml.jar
           chmod +x plantuml.jar
 
-      - name: Generate Diagrams (recursive)
+      - name: List diagrams directory
         run: |
-          java -jar ~/plantuml/plantuml.jar -tpng -r diagrams
+          echo "Workspace: $GITHUB_WORKSPACE"
+          ls -la
+          echo "---- diagrams root ----"
+          ls -la diagrams || true
+          echo "---- diagrams (recursive) ----"
+          find diagrams -type f -maxdepth 10 -printf '%p\n' 2>/dev/null || true
+
+      - name: Generate Diagrams (explicit find)
+        run: |
+          set -e
+          mapfile -t FILES < <(find diagrams -type f -name "*.puml")
+          if [ ${#FILES[@]} -eq 0 ]; then
+            echo "No .puml files found under diagrams" >&2
+            exit 1
+          fi
+          echo "Found ${#FILES[@]} .puml files"
+          for f in "${FILES[@]}"; do
+            echo "Rendering $f"
+            java -jar ~/plantuml/plantuml.jar -tpng "$f"
+          done
 
       - name: Commit Diagrams
         if: github.event_name == 'push' && !contains(github.event.head_commit.message, 'Automated diagram generation')
