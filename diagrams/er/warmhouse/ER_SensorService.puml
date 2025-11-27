@@ -1,0 +1,36 @@
+@startuml ER_SensorService
+
+entity "DeviceType" as DeviceType {
+  * id : UUID [PK, NOT NULL]
+  --
+  code : varchar [NOT NULL]
+  name : varchar [NOT NULL]
+  meta : jsonb
+}
+
+entity "Device" as Device {
+  * id : UUID [PK, NOT NULL]
+  --
+  house_id : UUID [NOT NULL]
+  type_id : UUID [NOT NULL]
+  name : varchar [NOT NULL]
+  status : varchar [NOT NULL]
+  meta : jsonb
+  created_at : timestamptz [NOT NULL]
+  updated_at : timestamptz [NOT NULL]
+}
+
+entity "Module" as Module {
+  * id : UUID [PK, NOT NULL]
+  --
+  device_id : UUID [NOT NULL]
+  name : varchar [NOT NULL]
+  meta : jsonb
+  created_at : timestamptz [NOT NULL]
+  updated_at : timestamptz [NOT NULL]
+}
+
+DeviceType ||--o{ Device
+Device ||--o{ Module
+
+@enduml

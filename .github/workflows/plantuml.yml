@@ -32,16 +32,9 @@ jobs:
           wget https://github.com/plantuml/plantuml/releases/download/v1.2024.8/plantuml-1.2024.8.jar -O plantuml.jar
           chmod +x plantuml.jar
 
-      - name: Generate Diagrams
+      - name: Generate Diagrams (recursive)
         run: |
-          java -jar ~/plantuml/plantuml.jar diagrams/context/*.puml
-          java -jar ~/plantuml/plantuml.jar diagrams/context/*/*.puml
-          java -jar ~/plantuml/plantuml.jar diagrams/container/*.puml
-          java -jar ~/plantuml/plantuml.jar diagrams/container/*/*.puml
-          java -jar ~/plantuml/plantuml.jar diagrams/component/*.puml
-          java -jar ~/plantuml/plantuml.jar diagrams/component/*/*.puml
-          java -jar ~/plantuml/plantuml.jar diagrams/code/*.puml
-          java -jar ~/plantuml/plantuml.jar diagrams/code/*/*.puml
+          java -jar ~/plantuml/plantuml.jar -tpng -r diagrams
 
       - name: Commit Diagrams
         run: |

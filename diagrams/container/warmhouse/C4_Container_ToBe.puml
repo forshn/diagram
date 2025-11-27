@@ -18,7 +18,7 @@ Container(sensorService, "sensor-service", "Spring Boot [PostgreSQL]", "Устр
 
 Container(taskService, "task-service", "Spring Boot [PostgreSQL]", "Команды")
 Container(scenarioService, "scenario-service", "Spring Boot[PostgreSQL]", "Сценарии")
-Container(telemetryService, "telemetry-service", "Spring Boot", "Метрики")
+Container(telemetryService, "telemetry-service", "Spring Boot[Какая-то база (пока не понял какая)]", "Метрики")
 
 Container(adapterService, "warmhouse-adapter", "Spring Boot", "Адаптеры протоколов")
 Container(paymentService, "payment-service", "Spring Boot[PostgreSQL]", "Платежи")

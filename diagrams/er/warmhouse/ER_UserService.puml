@@ -1,0 +1,73 @@
+@startuml ER_UserService
+!theme plain
+
+entity "User" as User {
+  * id : UUID [PK, NOT NULL]
+  --
+  name : varchar?                ' NULL
+  meta : jsonb                   ' NULL
+  created_at : timestamptz [NOT NULL]
+  updated_at : timestamptz [NOT NULL]
+}
+
+entity "House" as House {
+  * id : UUID [PK, NOT NULL]
+  --
+  name : varchar [NOT NULL]
+  timezone : varchar?            ' NULL
+  meta : jsonb                   ' NULL
+  created_at : timestamptz [NOT NULL]
+  updated_at : timestamptz [NOT NULL]
+}
+
+entity "Room" as Room {
+  * id : UUID [PK, NOT NULL]
+  --
+  house_id : UUID [NOT NULL]
+  name : varchar [NOT NULL]
+  meta : jsonb                   ' NULL
+  created_at : timestamptz [NOT NULL]
+  updated_at : timestamptz [NOT NULL]
+}
+
+entity "UserHouse" as UserHouse {
+  * id : UUID [PK, NOT NULL]
+  --
+  user_id : UUID [NOT NULL]
+  house_id : UUID [NOT NULL]
+  role : varchar [NOT NULL]      ' OWNER/RESIDENT/GUEST
+  created_at : timestamptz [NOT NULL]
+}
+
+entity "Contact" as Contact {
+  * id : UUID [PK, NOT NULL]
+  --
+  user_id : UUID [NOT NULL]
+  type : varchar [NOT NULL]      ' EMAIL/PHONE/TELEGRAM/WEBHOOK
+  value : varchar [NOT NULL]
+  is_primary : boolean [NOT NULL]
+  meta : jsonb                   ' NULL
+  verified_at : timestamptz?
+  created_at : timestamptz [NOT NULL]
+  updated_at : timestamptz [NOT NULL]
+}
+
+User ||--o{ UserHouse
+House ||--o{ UserHouse
+House ||--o{ Room
+User ||--o{ Contact
+
+' --- Composite UNIQUE constraints ---
+note "UNIQUE (user_id, house_id)" as UH_UQ
+UserHouse .. UH_UQ
+
+note "UNIQUE (house_id, name)" as ROOM_UQ
+Room .. ROOM_UQ
+
+note "UNIQUE (type, value)" as CONTACT_UQ
+Contact .. CONTACT_UQ
+
+note "At most one primary per (user_id, type)" as CONTACT_PRIMARY
+Contact .. CONTACT_PRIMARY
+
+@enduml
