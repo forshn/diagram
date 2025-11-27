@@ -46,7 +46,7 @@ jobs:
           echo "---- diagrams (recursive) ----"
           find diagrams -type f -maxdepth 10 -printf '%p\n' 2>/dev/null || true
 
-      - name: Generate Diagrams (explicit find)
+      - name: Generate Diagrams (explicit find, UNSECURE)
         run: |
           set -e
           mapfile -t FILES < <(find diagrams -type f -name "*.puml")
@@ -55,9 +55,10 @@ jobs:
             exit 1
           fi
           echo "Found ${#FILES[@]} .puml files"
+          echo "PlantUML version:" && java -jar ~/plantuml/plantuml.jar -version
           for f in "${FILES[@]}"; do
             echo "Rendering $f"
-            java -jar ~/plantuml/plantuml.jar -tpng "$f"
+            java -DPLANTUML_SECURITY_PROFILE=UNSECURE -jar ~/plantuml/plantuml.jar -tpng "$f"
           done
 
       - name: Commit Diagrams
