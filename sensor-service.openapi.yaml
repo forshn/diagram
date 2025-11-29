@@ -1,0 +1,120 @@
+openapi: 3.0.3
+info:
+  title: Sensor Service API
+  version: 0.1.0
+  description: |
+    API Sensor Service.
+
+    Используется другими сервисами для получения измерений и списка датчиков.
+
+paths:
+  /sensors:
+    get:
+      summary: Получить список датчиков
+      responses:
+        '200':
+          description: Список датчиков
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+              examples:
+                ok:
+                  summary: Пример списка датчиков
+                  value:
+                    - id: "sensor-1"
+                      type: "TEMPERATURE"
+                      location: "Теплица #1"
+                    - id: "sensor-2"
+                      type: "HUMIDITY"
+                      location: "Теплица #1"
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /sensors/{id}:
+    get:
+      summary: Получить датчик по id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Один датчик
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+              examples:
+                ok:
+                  summary: Пример датчика
+                  value:
+                    id: "sensor-1"
+                    type: "TEMPERATURE"
+                    location: "Теплица #1"
+        '404':
+          description: Датчик не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /sensors/{id}/measurements:
+    get:
+      summary: Получить последние измерения по датчику
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список измерений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Measurement'
+              examples:
+                ok:
+                  summary: Пример измерений
+                  value:
+                    - timestamp: "2024-10-01T12:00:00Z"
+                      value: 23.4
+                    - timestamp: "2024-10-01T12:05:00Z"
+                      value: 23.7
+        '404':
+          description: Датчик не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+components:
+  schemas:
+    Sensor:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "sensor-1"
+        type:
+          type: string
+          example: "TEMPERATURE"
+        location:
+          type: string
+          example: "Теплица #1"
+      required: [id, type, location]
+
+    Measurement:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        value:
+          type: number
+          format: float
+      required: [timestamp, value]

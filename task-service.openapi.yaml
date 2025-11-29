@@ -22,6 +22,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Task'
+              examples:
+                ok:
+                  summary: Пример списка задач
+                  value:
+                    - id: "task-1"
+                      name: "Полить томаты"
+                      scenarioId: "scn-1"
+                      assignedTo: "user-1"
+                    - id: "task-2"
+                      name: "Проветрить теплицу"
+                      scenarioId: "scn-2"
+                      assignedTo: null
+        '500':
+          description: Внутренняя ошибка сервера
     post:
       summary: Создать задачу
       description: При создании service обращается к Scenario Service и User Service для валидации ссылок.
@@ -31,6 +45,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TaskCreate'
+            examples:
+              create:
+                summary: Пример создания задачи
+                value:
+                  name: "Полить томаты"
+                  scenarioId: "scn-1"
+                  assignedTo: "user-1"
       responses:
         '201':
           description: Задача создана
@@ -38,6 +59,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+              examples:
+                created:
+                  summary: Пример созданной задачи
+                  value:
+                    id: "task-1"
+                    name: "Полить томаты"
+                    scenarioId: "scn-1"
+                    assignedTo: "user-1"
+        '400':
+          description: Некорректный запрос (например, несуществующий scenarioId)
+        '500':
+          description: Внутренняя ошибка сервера
 
   /tasks/{id}:
     get:
@@ -55,6 +88,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+              examples:
+                ok:
+                  summary: Пример задачи
+                  value:
+                    id: "task-1"
+                    name: "Полить томаты"
+                    scenarioId: "scn-1"
+                    assignedTo: "user-1"
+        '404':
+          description: Задача не найдена
+        '500':
+          description: Внутренняя ошибка сервера
 
   /tasks/{id}/assign:
     post:
@@ -72,6 +117,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AssignRequest'
+            examples:
+              assign:
+                summary: Пример назначения задачи
+                value:
+                  userId: "user-1"
       responses:
         '200':
           description: Обновлённая задача
@@ -79,6 +129,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+              examples:
+                assigned:
+                  summary: Пример назначенной задачи
+                  value:
+                    id: "task-1"
+                    name: "Полить томаты"
+                    scenarioId: "scn-1"
+                    assignedTo: "user-1"
+        '404':
+          description: Задача или пользователь не найдены
+        '500':
+          description: Внутренняя ошибка сервера
 
 components:
   schemas:

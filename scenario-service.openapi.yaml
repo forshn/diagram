@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: Scenario Service API
+  version: 0.1.0
+  description: |
+    API Scenario Service.
+
+    Используется Task Service для проверки ссылок на сценарии.
+
+paths:
+  /scenarios:
+    get:
+      summary: Получить список сценариев
+      responses:
+        '200':
+          description: Список сценариев
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Scenario'
+              examples:
+                ok:
+                  summary: Пример списка сценариев
+                  value:
+                    - id: "scn-1"
+                      name: "Полив по расписанию"
+                      active: true
+                    - id: "scn-2"
+                      name: "Проветривание теплицы"
+                      active: false
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /scenarios/{id}:
+    get:
+      summary: Получить сценарий по id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Один сценарий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+              examples:
+                ok:
+                  summary: Пример сценария
+                  value:
+                    id: "scn-1"
+                    name: "Полив по расписанию"
+                    active: true
+        '404':
+          description: Сценарий не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+components:
+  schemas:
+    Scenario:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "scn-1"
+        name:
+          type: string
+          example: "Полив по расписанию"
+        active:
+          type: boolean
+          example: true
+      required: [id, name, active]
