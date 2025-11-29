@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Task Service API
+  version: 0.1.0
+  description: |
+   API Task Service.
+
+    Взаимодействия с другими сервисами:
+    - Scenario Service
+    - User Service
+
+paths:
+  /tasks:
+    get:
+      summary: Получить список задач
+      responses:
+        '200':
+          description: Упрощённый список задач
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      summary: Создать задачу
+      description: При создании service обращается к Scenario Service и User Service для валидации ссылок.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Задача создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/{id}:
+    get:
+      summary: Получить задачу по id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Одна задача
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/{id}/assign:
+    post:
+      summary: Назначить задачу пользователю
+      description: Task Service вызывает User Service для проверки существования пользователя.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRequest'
+      responses:
+        '200':
+          description: Обновлённая задача
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "task-123"
+        name:
+          type: string
+          example: "Полить томаты"
+        scenarioId:
+          type: string
+          description: ID сценария в Scenario Service
+        assignedTo:
+          type: string
+          nullable: true
+          description: ID пользователя в User Service
+      required: [id, name, scenarioId]
+
+    TaskCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        scenarioId:
+          type: string
+        assignedTo:
+          type: string
+          nullable: true
+      required: [name, scenarioId]
+
+    AssignRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: ID пользователя в User Service
+      required: [userId]
