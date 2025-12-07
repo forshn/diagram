@@ -1,0 +1,57 @@
+@startuml C4_Container
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 30
+
+LAYOUT_LEFT_RIGHT()
+
+title C4 Container - КиноБездна (To-Be)
+
+Person(user, "Пользователь")
+
+Container(gateway, "API Gateway", "Spring Boot / Nginx", "API Gateway")
+Container(bff, "bff-service", "Spring Boot", "Backend-for-frontend")
+
+Container(userService, "user-service", "Spring Boot [PostgreSQL]", "Пользователи, профили")
+Container(subscriptionService, "subscription-service", "Spring Boot [PostgreSQL]", "Подписки")
+Container(paymentService, "payment-service", "Spring Boot [PostgreSQL]", "Платежи")
+Container(catalogService, "catalog-service", "Spring Boot [PostgreSQL]", "Каталог, метаданные")
+Container(ratingService, "rating-service", "Spring Boot [PostgreSQL]", "Оценки, избранное")
+Container(recommendationService, "recommendation-adapter", "Spring Boot", "Интеграция с рекомендациями")
+
+Container(messageBroker, "message-broker", "RabbitMQ / Kafka", "События")
+
+System_Ext(paySystem, "Платёжная система", "Acquiring / PSP")
+System_Ext(cdn, "CDN / S3", "Объектное хранилище")
+System_Ext(recSystem, "Рекомендательная система", "ML-платформа")
+
+Rel(user, gateway, "REST")
+
+Rel(gateway, bff, "REST")
+
+Rel(bff, userService, "REST")
+Rel(bff, subscriptionService, "REST")
+Rel(bff, paymentService, "REST")
+Rel(bff, catalogService, "REST")
+Rel(bff, ratingService, "REST")
+Rel(bff, recommendationService, "REST")
+
+Rel(userService, messageBroker, "Kafka")
+Rel(subscriptionService, messageBroker, "Kafka")
+Rel(paymentService, messageBroker, "Kafka")
+Rel(catalogService, messageBroker, "Kafka")
+Rel(ratingService, messageBroker, "Kafka")
+Rel(recommendationService, messageBroker, "Kafka")
+
+Rel(messageBroker, subscriptionService, "Kafka")
+Rel(messageBroker, paymentService, "Kafka")
+Rel(messageBroker, recommendationService, "Kafka")
+
+Rel(paymentService, paySystem, "REST")
+Rel(catalogService, cdn, "REST")
+Rel(recommendationService, recSystem, "REST")
+
+@enduml
